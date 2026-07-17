@@ -1,0 +1,29 @@
+name: Despliegue Corporativo - Gestion Proyectos
+
+on:
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Subir archivos para despliegue
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Despliegue en vivo
+        id: deployment
+        uses: actions/deploy-pages@v4
