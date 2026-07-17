@@ -1,6 +1,6 @@
 ﻿import controller from '../src/controller.js';
 
-// --- FUNCIONES GLOBALES PARA EL HTML (onclick) ---
+// --- ASIGNACIÓN AL OBJETO WINDOW (Necesario para los onclick del HTML) ---
 window.eliminarProyecto = eliminarProyecto;
 window.eliminarTarea = eliminarTarea;
 window.eliminarFase = eliminarFase;
@@ -25,7 +25,7 @@ async function cargarProyectos() {
     const container = document.getElementById('proyectos-container');
     container.className = "d-flex flex-column gap-4 w-100";
     
-    // Obtenemos UF desde el controlador (local)
+    // Obtenemos UF desde el método del objeto controller
     const VALOR_UF = await controller.obtenerUF();
 
     container.innerHTML = proyectos.map(p => {
