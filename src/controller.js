@@ -1,97 +1,104 @@
-const axios = require('axios');
-const model = require('./model');
+// controller.js - Estructura completa para navegador
+// Importante: Asegúrate de tener tu archivo en ./data/uf.json
 
 const obtenerUF = async () => {
     try {
-        const res = await axios.get('https://mindicador.cl/api/uf');
-        return res.data.serie[0].valor;
+        const res = await fetch('./data/uf.json');
+        const data = await res.json();
+        return data.valor_uf; 
     } catch (error) {
         console.error("Error al obtener la UF:", error);
         return 0;
     }
 };
 
-const obtenerTodos = (req, res) => {
-    res.json(model.leerDatos());
+const controller = {
+    proyectos: JSON.parse(localStorage.getItem('proyectos')) || [],
+
+    // --- LECTURA ---
+    obtenerTodos: () => {
+        return controller.proyectos;
+    },
+
+    // --- CREACIÓN ---
+    crearProyecto: async (nombre, fechas) => {
+        const valorUF = await obtenerUF();
+        const costoCalculado = (valorUF * 0.25).toFixed(2);
+        
+        const nuevoProyecto = {
+            id: Date.now().toString(),
+            nombre: nombre || "Sin nombre",
+            fechas: fechas,
+            metrics: {
+                uf_dia: valorUF,
+                costo_025uf: costoCalculado
+            },
+            fases: []
+        };
+
+        controller.proyectos.push(nuevoProyecto);
+        localStorage.setItem('proyectos', JSON.stringify(controller.proyectos));
+        return nuevoProyecto;
+    },
+
+    // --- ELIMINACIÓN ---
+    eliminarProyecto: (id) => {
+        controller.proyectos = controller.proyectos.filter(p => p.id !== id);
+        localStorage.setItem('proyectos', JSON.stringify(controller.proyectos));
+        return true;
+    },
+
+    // --- GESTIÓN DE FASES ---
+    agregarFase: (id, nombre) => {
+        const proyecto = controller.proyectos.find(p => p.id === id);
+        if (!proyecto) return false;
+        
+        proyecto.fases.push({ id: Date.now().toString(), nombre, tareas: [] });
+        localStorage.setItem('proyectos', JSON.stringify(controller.proyectos));
+        return true;
+    },
+
+    eliminarFase: (id, faseId) => {
+        const proyecto = controller.proyectos.find(p => p.id === id);
+        if (!proyecto) return false;
+        
+        proyecto.fases = proyecto.fases.filter(f => f.id !== faseId);
+        localStorage.setItem('proyectos', JSON.stringify(controller.proyectos));
+        return true;
+    },
+
+    // --- GESTIÓN DE TAREAS ---
+    agregarTarea: (id, faseId, tareaData) => {
+        const proyecto = controller.proyectos.find(p => p.id === id);
+        const fase = proyecto?.fases.find(f => f.id === faseId);
+        if (!fase) return false;
+        
+        tareaData.id = Date.now().toString();
+        fase.tareas.push(tareaData);
+        localStorage.setItem('proyectos', JSON.stringify(controller.proyectos));
+        return true;
+    },
+
+    editarTarea: (id, faseId, tareaId, tareaData) => {
+        const proyecto = controller.proyectos.find(p => p.id === id);
+        const fase = proyecto?.fases.find(f => f.id === faseId);
+        const tarea = fase?.tareas.find(t => t.id === tareaId);
+        if (!tarea) return false;
+        
+        Object.assign(tarea, tareaData);
+        localStorage.setItem('proyectos', JSON.stringify(controller.proyectos));
+        return true;
+    },
+
+    eliminarTarea: (id, faseId, tareaId) => {
+        const proyecto = controller.proyectos.find(p => p.id === id);
+        const fase = proyecto?.fases.find(f => f.id === faseId);
+        if (!fase) return false;
+        
+        fase.tareas = fase.tareas.filter(t => t.id !== tareaId);
+        localStorage.setItem('proyectos', JSON.stringify(controller.proyectos));
+        return true;
+    }
 };
 
-const crearProyecto = async (req, res) => {
-    const valorUF = await obtenerUF();
-    const costoCalculado = (valorUF * 0.25).toFixed(2);
-    
-    const { nombre, fechas } = req.body;
-    
-    const metrics = {
-        uf_dia: valorUF,
-        costo_025uf: costoCalculado
-    };
-
-    const nuevoProyecto = model.crearNuevoProyecto(nombre || "Sin nombre", fechas, metrics);
-    
-    res.status(201).json(nuevoProyecto);
-};
-
-// --- FUNCIÓN PARA ELIMINAR PROYECTO ---
-const eliminarProyecto = (req, res) => {
-    const { id } = req.params;
-    const exito = model.eliminarProyectoCompleto(id);
-    
-    if (!exito) return res.status(404).json({ message: "Proyecto no encontrado" });
-    res.status(200).json({ message: "Proyecto eliminado con éxito" });
-};
-
-const agregarFase = (req, res) => {
-    const { id } = req.params;
-    const { nombre } = req.body;
-    const exito = model.agregarFaseAlProyecto(id, nombre);
-    
-    if (!exito) return res.status(404).json({ message: "Proyecto no encontrado" });
-    res.status(201).json({ message: "Fase agregada con éxito" });
-};
-
-const agregarTarea = (req, res) => {
-    const { id, faseId } = req.params;
-    const tareaData = req.body; 
-    
-    const exito = model.agregarTareaAFase(id, faseId, tareaData);
-    
-    if (!exito) return res.status(404).json({ message: "Proyecto o fase no encontrados" });
-    res.status(201).json({ message: "Tarea agregada con éxito" });
-};
-
-const editarTarea = (req, res) => {
-    const { id, faseId, tareaId } = req.params;
-    const tareaData = req.body; 
-    
-    const exito = model.editarTareaEnFase(id, faseId, tareaId, tareaData);
-    
-    if (!exito) return res.status(404).json({ message: "Error al actualizar la tarea" });
-    res.status(200).json({ message: "Tarea actualizada con éxito" });
-};
-
-const eliminarFase = (req, res) => {
-    const { id, faseId } = req.params;
-    const exito = model.eliminarFaseDelProyecto(id, faseId);
-    
-    if (!exito) return res.status(404).json({ message: "Proyecto no encontrado" });
-    res.status(200).json({ message: "Fase eliminada con éxito" });
-};
-
-const eliminarTarea = (req, res) => {
-    const { id, faseId, tareaId } = req.params;
-    const exito = model.eliminarTareaDeFase(id, faseId, tareaId);
-    
-    if (!exito) return res.status(404).json({ message: "Tarea no encontrada o error al eliminar" });
-    res.status(200).json({ message: "Tarea eliminada con éxito" });
-};
-
-module.exports = { 
-    obtenerTodos, 
-    crearProyecto, 
-    eliminarProyecto,
-    agregarFase, 
-    agregarTarea,
-    editarTarea,
-    eliminarFase,
-    eliminarTarea 
-};
+export default controller;
