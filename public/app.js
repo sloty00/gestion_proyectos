@@ -1,4 +1,4 @@
-﻿import controller from './controller.js';
+﻿import controller from '../src/controller.js';
 
 // --- FUNCIONES GLOBALES PARA EL HTML (onclick) ---
 window.eliminarProyecto = eliminarProyecto;
