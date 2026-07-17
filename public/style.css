@@ -1,13 +1,14 @@
 /* --- Configuración Global --- */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #718096; /* Color de fondo gris para contraste */
+    background-color: #718096;
     padding: 20px;
+    color: white; /* Asegura que el texto general sea blanco */
 }
 
 /* --- Tarjeta Principal (Dashboard) --- */
 .card-dark-dashboard {
-    background-color: #1e2126; /* Fondo oscuro original */
+    background-color: #1e2126;
     color: white;
     border-radius: 12px;
     padding: 20px;
@@ -18,10 +19,10 @@ body {
     min-width: 300px;
 }
 
-/* --- Contenedor de Fases (Apilamiento) --- */
+/* --- Contenedor de Fases --- */
 .fases-container {
     display: flex;
-    flex-direction: column; /* Garantiza el apilamiento vertical */
+    flex-direction: column;
     gap: 15px;
     margin-top: 15px;
 }
@@ -31,12 +32,13 @@ body {
     border-radius: 8px;
     padding: 12px;
     border: 1px solid #4a5058;
+    color: white;
 }
 
 /* --- Lista y Estilo de Tareas --- */
 .tareas-list {
     display: flex;
-    flex-direction: column; /* Las tareas se apilan hacia abajo */
+    flex-direction: column;
     gap: 5px;
     margin-top: 10px;
 }
@@ -44,10 +46,12 @@ body {
 .tarea-item {
     display: flex;
     justify-content: space-between;
+    align-items: center; /* Alineación vertical */
     font-size: 0.85rem;
     border-top: 1px solid #4a5058;
-    padding-top: 5px;
-    padding-bottom: 5px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    color: white; /* Solución para el texto oscuro */
 }
 
 /* --- Botones --- */
@@ -79,4 +83,5 @@ body {
     font-size: 0.9rem;
     font-weight: bold;
     display: block;
+    color: white;
 }
