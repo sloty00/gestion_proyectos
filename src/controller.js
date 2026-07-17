@@ -1,28 +1,23 @@
-// controller.js - Estructura completa para navegador
-// Importante: Asegúrate de tener tu archivo en ./data/uf.json
-
-const obtenerUF = async () => {
-    try {
-        const res = await fetch('../data/uf.json');
-        const data = await res.json();
-        return data.valor_uf; 
-    } catch (error) {
-        console.error("Error al obtener la UF:", error);
-        return 0;
-    }
-};
-
 const controller = {
     proyectos: JSON.parse(localStorage.getItem('proyectos')) || [],
 
-    // --- LECTURA ---
+    obtenerUF: async () => {
+        try {
+            const res = await fetch('./data/uf.json');
+            const data = await res.json();
+            return data.valor_uf; 
+        } catch (error) {
+            console.error("Error al obtener la UF:", error);
+            return 0;
+        }
+    },
+
     obtenerTodos: () => {
         return controller.proyectos;
     },
 
-    // --- CREACIÓN ---
     crearProyecto: async (nombre, fechas) => {
-        const valorUF = await obtenerUF();
+        const valorUF = await controller.obtenerUF();
         const costoCalculado = (valorUF * 0.25).toFixed(2);
         
         const nuevoProyecto = {
@@ -41,18 +36,15 @@ const controller = {
         return nuevoProyecto;
     },
 
-    // --- ELIMINACIÓN ---
     eliminarProyecto: (id) => {
         controller.proyectos = controller.proyectos.filter(p => p.id !== id);
         localStorage.setItem('proyectos', JSON.stringify(controller.proyectos));
         return true;
     },
 
-    // --- GESTIÓN DE FASES ---
     agregarFase: (id, nombre) => {
         const proyecto = controller.proyectos.find(p => p.id === id);
         if (!proyecto) return false;
-        
         proyecto.fases.push({ id: Date.now().toString(), nombre, tareas: [] });
         localStorage.setItem('proyectos', JSON.stringify(controller.proyectos));
         return true;
@@ -61,18 +53,15 @@ const controller = {
     eliminarFase: (id, faseId) => {
         const proyecto = controller.proyectos.find(p => p.id === id);
         if (!proyecto) return false;
-        
         proyecto.fases = proyecto.fases.filter(f => f.id !== faseId);
         localStorage.setItem('proyectos', JSON.stringify(controller.proyectos));
         return true;
     },
 
-    // --- GESTIÓN DE TAREAS ---
     agregarTarea: (id, faseId, tareaData) => {
         const proyecto = controller.proyectos.find(p => p.id === id);
         const fase = proyecto?.fases.find(f => f.id === faseId);
         if (!fase) return false;
-        
         tareaData.id = Date.now().toString();
         fase.tareas.push(tareaData);
         localStorage.setItem('proyectos', JSON.stringify(controller.proyectos));
@@ -84,7 +73,6 @@ const controller = {
         const fase = proyecto?.fases.find(f => f.id === faseId);
         const tarea = fase?.tareas.find(t => t.id === tareaId);
         if (!tarea) return false;
-        
         Object.assign(tarea, tareaData);
         localStorage.setItem('proyectos', JSON.stringify(controller.proyectos));
         return true;
@@ -94,7 +82,6 @@ const controller = {
         const proyecto = controller.proyectos.find(p => p.id === id);
         const fase = proyecto?.fases.find(f => f.id === faseId);
         if (!fase) return false;
-        
         fase.tareas = fase.tareas.filter(t => t.id !== tareaId);
         localStorage.setItem('proyectos', JSON.stringify(controller.proyectos));
         return true;
