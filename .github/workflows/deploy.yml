@@ -11,6 +11,11 @@ permissions:
 
 jobs:
   deploy:
+    # --- ESTA ES LA PARTE QUE FALTA O ESTÁ MAL ---
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    # ---------------------------------------------
     runs-on: ubuntu-latest
     steps:
       - name: Checkout del código
@@ -22,7 +27,7 @@ jobs:
       - name: Subir archivos para despliegue
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'
+          path: '.' 
 
       - name: Despliegue en vivo
         id: deployment
