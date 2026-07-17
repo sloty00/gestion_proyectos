@@ -33,6 +33,17 @@ const crearNuevoProyecto = (nombre, fechas, metrics) => {
     return nuevoProyecto;
 };
 
+const eliminarProyectoCompleto = (proyectoId) => {
+    let proyectos = leerDatos();
+    const proyectosFiltrados = proyectos.filter(p => p.id !== proyectoId);
+    
+    if (proyectos.length !== proyectosFiltrados.length) {
+        guardarDatos(proyectosFiltrados);
+        return true;
+    }
+    return false;
+};
+
 // --- Lógica de Fases ---
 const agregarFaseAlProyecto = (proyectoId, nombreFase) => {
     const proyectos = leerDatos();
@@ -99,7 +110,6 @@ const editarTareaEnFase = (proyectoId, faseId, tareaId, newData) => {
             const tIndex = proyectos[pIndex].fases[fIndex].tareas.findIndex(t => t.id === tareaId);
             
             if (tIndex !== -1) {
-                // Actualiza los campos especificados
                 proyectos[pIndex].fases[fIndex].tareas[tIndex] = {
                     ...proyectos[pIndex].fases[fIndex].tareas[tIndex],
                     descripcion: newData.descripcion,
@@ -115,12 +125,33 @@ const editarTareaEnFase = (proyectoId, faseId, tareaId, newData) => {
     return false;
 };
 
+const eliminarTareaDeFase = (proyectoId, faseId, tareaId) => {
+    const proyectos = leerDatos();
+    const pIndex = proyectos.findIndex(p => p.id === proyectoId);
+
+    if (pIndex !== -1) {
+        const fIndex = proyectos[pIndex].fases.findIndex(f => f.id === faseId);
+        
+        if (fIndex !== -1) {
+            proyectos[pIndex].fases[fIndex].tareas = proyectos[pIndex].fases[fIndex].tareas.filter(
+                t => t.id !== tareaId
+            );
+            
+            guardarDatos(proyectos);
+            return true;
+        }
+    }
+    return false;
+};
+
 module.exports = { 
     leerDatos, 
     guardarDatos,
     crearNuevoProyecto,
+    eliminarProyectoCompleto,
     agregarFaseAlProyecto, 
     eliminarFaseDelProyecto,
     agregarTareaAFase,
-    editarTareaEnFase
+    editarTareaEnFase,
+    eliminarTareaDeFase
 };

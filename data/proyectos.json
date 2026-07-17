@@ -1,42 +1,10 @@
 [
   {
-    "id": "1784265320128",
-    "nombre": "Prueba 1",
+    "id": "1784272871216",
+    "nombre": "Software Gestionador de proyectos",
     "fechas": {
       "inicio": "2026-07-17",
-      "finProyectado": "2026-07-31"
-    },
-    "fases": [
-      {
-        "id": "1784265327492",
-        "nombre": "Levantamiento",
-        "tareas": [
-          {
-            "id": "1784265512638",
-            "descripcion": "Tarea1",
-            "horas": 6,
-            "estado": "COMPLETADA"
-          },
-          {
-            "id": "1784265557747",
-            "descripcion": "Tarea2",
-            "horas": 5,
-            "estado": "COMPLETADA"
-          }
-        ]
-      }
-    ],
-    "metrics": {
-      "uf_dia": 40844.79,
-      "costo_025uf": "10211.20"
-    }
-  },
-  {
-    "id": "1784266075281",
-    "nombre": "Peueba 2",
-    "fechas": {
-      "inicio": "2026-07-17",
-      "finProyectado": "2026-07-31"
+      "finProyectado": "2026-07-24"
     },
     "fases": [],
     "metrics": {

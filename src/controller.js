@@ -31,6 +31,15 @@ const crearProyecto = async (req, res) => {
     res.status(201).json(nuevoProyecto);
 };
 
+// --- FUNCIÓN PARA ELIMINAR PROYECTO ---
+const eliminarProyecto = (req, res) => {
+    const { id } = req.params;
+    const exito = model.eliminarProyectoCompleto(id);
+    
+    if (!exito) return res.status(404).json({ message: "Proyecto no encontrado" });
+    res.status(200).json({ message: "Proyecto eliminado con éxito" });
+};
+
 const agregarFase = (req, res) => {
     const { id } = req.params;
     const { nombre } = req.body;
@@ -50,7 +59,6 @@ const agregarTarea = (req, res) => {
     res.status(201).json({ message: "Tarea agregada con éxito" });
 };
 
-// --- NUEVA FUNCIÓN PARA EDITAR TAREAS ---
 const editarTarea = (req, res) => {
     const { id, faseId, tareaId } = req.params;
     const tareaData = req.body; 
@@ -69,11 +77,21 @@ const eliminarFase = (req, res) => {
     res.status(200).json({ message: "Fase eliminada con éxito" });
 };
 
+const eliminarTarea = (req, res) => {
+    const { id, faseId, tareaId } = req.params;
+    const exito = model.eliminarTareaDeFase(id, faseId, tareaId);
+    
+    if (!exito) return res.status(404).json({ message: "Tarea no encontrada o error al eliminar" });
+    res.status(200).json({ message: "Tarea eliminada con éxito" });
+};
+
 module.exports = { 
     obtenerTodos, 
     crearProyecto, 
+    eliminarProyecto,
     agregarFase, 
     agregarTarea,
-    editarTarea, // Exportamos la nueva función
-    eliminarFase 
+    editarTarea,
+    eliminarFase,
+    eliminarTarea 
 };

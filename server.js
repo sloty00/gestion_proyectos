@@ -13,6 +13,8 @@ app.use(express.static('public'));
 // Rutas de Proyectos
 app.get('/api/proyectos', controller.obtenerTodos);
 app.post('/api/proyectos', controller.crearProyecto);
+// --- RUTA PARA ELIMINAR PROYECTO ---
+app.delete('/api/proyectos/:id', controller.eliminarProyecto);
 
 // Rutas de Fases
 app.post('/api/proyectos/:id/fases', controller.agregarFase);
@@ -21,8 +23,11 @@ app.delete('/api/proyectos/:id/fases/:faseId', controller.eliminarFase);
 // Rutas de Tareas
 app.post('/api/proyectos/:id/fases/:faseId/tareas', controller.agregarTarea);
 
-// --- RUTA NUEVA PARA EDITAR TAREAS (OBLIGATORIA PARA EL BOTÓN EDITAR) ---
+// RUTA PARA EDITAR TAREAS
 app.put('/api/proyectos/:id/fases/:faseId/tareas/:tareaId', controller.editarTarea);
+
+// --- RUTA PARA ELIMINAR TAREAS ---
+app.delete('/api/proyectos/:id/fases/:faseId/tareas/:tareaId', controller.eliminarTarea);
 
 app.listen(PORT, () => {
     console.log('Servidor activo en http://localhost:' + PORT);
