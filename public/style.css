@@ -1,0 +1,82 @@
+/* --- Configuración Global --- */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #718096; /* Color de fondo gris para contraste */
+    padding: 20px;
+}
+
+/* --- Tarjeta Principal (Dashboard) --- */
+.card-dark-dashboard {
+    background-color: #1e2126; /* Fondo oscuro original */
+    color: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    min-width: 300px;
+}
+
+/* --- Contenedor de Fases (Apilamiento) --- */
+.fases-container {
+    display: flex;
+    flex-direction: column; /* Garantiza el apilamiento vertical */
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.fase-badge {
+    background-color: #2d3436; 
+    border-radius: 8px;
+    padding: 12px;
+    border: 1px solid #4a5058;
+}
+
+/* --- Lista y Estilo de Tareas --- */
+.tareas-list {
+    display: flex;
+    flex-direction: column; /* Las tareas se apilan hacia abajo */
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.tarea-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    border-top: 1px solid #4a5058;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+/* --- Botones --- */
+.btn-outline-custom {
+    border: 1px solid #007bff;
+    color: #007bff;
+    background: transparent;
+    width: 100%;
+    margin-top: 15px;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-outline-custom:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+/* --- Tipografía y Etiquetas --- */
+.label-small {
+    font-size: 0.7rem;
+    color: #a0aec0;
+    text-transform: uppercase;
+    display: block;
+}
+
+.value-bold {
+    font-size: 0.9rem;
+    font-weight: bold;
+    display: block;
+}
