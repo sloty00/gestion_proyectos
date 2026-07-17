@@ -3,7 +3,7 @@
 
 const obtenerUF = async () => {
     try {
-        const res = await fetch('./data/uf.json');
+        const res = await fetch('../data/uf.json');
         const data = await res.json();
         return data.valor_uf; 
     } catch (error) {
