@@ -1,4 +1,4 @@
-﻿import controller from '../src/controller.js';
+import controller from '../src/controller.js';
 
 // --- ASIGNACIÓN AL OBJETO WINDOW (Necesario para los onclick del HTML) ---
 window.eliminarProyecto = eliminarProyecto;
@@ -83,11 +83,12 @@ async function cargarProyectos() {
                 ${p.fases.map(fase => {
                     const compFase = fase.tareas.filter(t => t.estado === "COMPLETADA").length;
                     const porcFase = fase.tareas.length > 0 ? Math.round((compFase / fase.tareas.length) * 100) : 0;
+                    const horasFase = fase.tareas.reduce((sum, t) => sum + (parseFloat(t.horas) || 0), 0);
                     return `
                     <div class="card bg-dark border-secondary mb-3">
                         <div class="card-body p-3">
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="m-0 text-secondary">FASE: ${fase.nombre}</h5>
+                                <h5 class="m-0 text-secondary">FASE: ${fase.nombre} <span class="badge bg-secondary ms-2">${horasFase} H/H</span></h5>
                                 <div>
                                     <button class="btn btn-sm btn-success me-2" onclick="abrirModalTarea('${p.id}', '${fase.id}')">+ Tarea</button>
                                     <span class="fw-bold text-success me-2">${porcFase}%</span>
