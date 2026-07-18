@@ -96,7 +96,7 @@ async function cargarProyectos() {
                             </div>
                             ${fase.tareas.map(t => `
                                 <div class="d-flex justify-content-between align-items-center border-top border-secondary pt-2">
-                                    <span class="${t.estado === 'COMPLETADA' ? 'text-decoration-line-through text-secondary' : ''}">• ${t.descripcion}</span>
+                                    <span class="${t.estado === 'COMPLETADA' ? 'text-decoration-line-through text-secondary' : 'text-white'}">• ${t.descripcion}</span>
                                     <div>
                                         <span class="badge ${t.estado === 'COMPLETADA' ? 'bg-info' : 'bg-warning'} text-dark">${t.horas} hrs | ${t.estado}</span>
                                         <button class="btn btn-sm btn-outline-info ms-2 py-0" onclick="iniciarEdicion('${p.id}', '${fase.id}', '${t.id}', '${t.descripcion}', ${t.horas}, '${t.estado}')">Editar</button>
