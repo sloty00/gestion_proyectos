@@ -1,6 +1,6 @@
 import controller from '../src/controller.js';
 
-// --- ASIGNACIÓN AL OBJETO WINDOW (Necesario para los onclick del HTML) ---
+// --- ASIGNACIÓN AL OBJETO WINDOW ---
 window.eliminarProyecto = eliminarProyecto;
 window.eliminarTarea = eliminarTarea;
 window.eliminarFase = eliminarFase;
@@ -25,23 +25,22 @@ async function cargarProyectos() {
     const container = document.getElementById('proyectos-container');
     container.className = "d-flex flex-column gap-4 w-100";
     
-    // Obtenemos UF desde el método del objeto controller
     const VALOR_UF = await controller.obtenerUF();
 
     container.innerHTML = proyectos.map(p => {
         let totalTareas = 0;
         let completadas = 0;
-        let totalHoras = 0;
+        let totalHorasProyecto = 0; // Calcularemos esto para el proyecto
 
         p.fases.forEach(f => {
             totalTareas += f.tareas.length;
             f.tareas.forEach(t => {
-                totalHoras += parseFloat(t.horas) || 0;
+                totalHorasProyecto += parseFloat(t.horas) || 0;
                 if (t.estado === "COMPLETADA") completadas++;
             });
         });
 
-        const totalUF = totalHoras * 0.25;
+        const totalUF = totalHorasProyecto * 0.25;
         const totalCLP = totalUF * VALOR_UF;
         const porcentajeGlobal = totalTareas > 0 ? Math.round((completadas / totalTareas) * 100) : 0;
 
@@ -72,8 +71,8 @@ async function cargarProyectos() {
                     <div class="text-success">$${Math.round(totalCLP).toLocaleString('es-CL')} CLP</div>
                 </div>
                 <div class="col-md-3">
-                    <small class="text-secondary" style="font-size: 0.7rem;">AVANCE GLOBAL</small>
-                    <div class="fw-bold">${porcentajeGlobal}%</div>
+                    <small class="text-secondary" style="font-size: 0.7rem;">PROYECTO H/H</small>
+                    <div class="text-warning fw-bold">${totalHorasProyecto} hrs</div>
                     <div class="progress mt-1" style="height: 8px; background: #333;">
                         <div class="progress-bar" style="width: ${porcentajeGlobal}%; background-color: #00f2ff;"></div>
                     </div>
@@ -83,7 +82,9 @@ async function cargarProyectos() {
                 ${p.fases.map(fase => {
                     const compFase = fase.tareas.filter(t => t.estado === "COMPLETADA").length;
                     const porcFase = fase.tareas.length > 0 ? Math.round((compFase / fase.tareas.length) * 100) : 0;
+                    // Cálculo de horas para esta fase específica
                     const horasFase = fase.tareas.reduce((sum, t) => sum + (parseFloat(t.horas) || 0), 0);
+                    
                     return `
                     <div class="card bg-dark border-secondary mb-3">
                         <div class="card-body p-3">
@@ -118,14 +119,8 @@ async function guardarProyecto() {
     const nombre = document.getElementById('nombreProyecto').value;
     const inicio = document.getElementById('fechaInicio').value;
     const finProyectado = document.getElementById('fechaFin').value;
-
-    if (!nombre || !inicio || !finProyectado) {
-        alert("Por favor completa todos los campos.");
-        return;
-    }
-
+    if (!nombre || !inicio || !finProyectado) { alert("Por favor completa todos los campos."); return; }
     await controller.crearProyecto(nombre, { inicio, finProyectado });
-    
     document.getElementById('nombreProyecto').value = '';
     document.getElementById('fechaInicio').value = '';
     document.getElementById('fechaFin').value = '';
@@ -149,30 +144,14 @@ async function guardarEdicion() {
     const descripcion = document.getElementById('edit-desc').value;
     const horas = document.getElementById('edit-horas').value;
     const estado = document.getElementById('edit-estado').value;
-
     controller.editarTarea(pId, fId, tId, { descripcion, horas: parseFloat(horas), estado });
     bootstrap.Modal.getInstance(document.getElementById('modalEditar')).hide();
     cargarProyectos();
 }
 
-async function eliminarProyecto(pId) {
-    if (!confirm('¿Eliminar proyecto?')) return;
-    controller.eliminarProyecto(pId);
-    cargarProyectos();
-}
-
-async function eliminarTarea(pId, fId, tId) {
-    if (!confirm('¿Eliminar tarea?')) return;
-    controller.eliminarTarea(pId, fId, tId);
-    cargarProyectos();
-}
-
-async function eliminarFase(pId, fId) {
-    if (!confirm('¿Eliminar fase?')) return;
-    controller.eliminarFase(pId, fId);
-    cargarProyectos();
-}
-
+async function eliminarProyecto(pId) { if (!confirm('¿Eliminar proyecto?')) return; controller.eliminarProyecto(pId); cargarProyectos(); }
+async function eliminarTarea(pId, fId, tId) { if (!confirm('¿Eliminar tarea?')) return; controller.eliminarTarea(pId, fId, tId); cargarProyectos(); }
+async function eliminarFase(pId, fId) { if (!confirm('¿Eliminar fase?')) return; controller.eliminarFase(pId, fId); cargarProyectos(); }
 async function abrirModalTarea(pId, fId) {
     const descripcion = prompt("Descripción:");
     if (!descripcion) return;
@@ -180,7 +159,6 @@ async function abrirModalTarea(pId, fId) {
     controller.agregarTarea(pId, fId, { descripcion, horas, estado: "En Proceso" });
     cargarProyectos();
 }
-
 async function agregarFase(pId) {
     const nombre = prompt("Nombre de la fase:");
     if (!nombre) return;
@@ -188,5 +166,4 @@ async function agregarFase(pId) {
     cargarProyectos();
 }
 
-// Inicialización
 cargarProyectos();
