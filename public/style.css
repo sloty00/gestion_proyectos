@@ -85,3 +85,25 @@ body {
     display: block;
     color: white;
 }
+
+/* Corrección para Floating Labels en diseño oscuro */
+.form-floating > label {
+    color: #a0aec0; /* Un gris claro legible sobre el fondo oscuro */
+    pointer-events: none; /* Asegura que el clic pase al input */
+}
+
+.form-floating > .form-control:focus ~ label {
+    color: #ffffff; /* Blanco brillante cuando el usuario escribe */
+}
+
+/* Ajuste de color del texto del input para que sea legible en tu diseño */
+.form-control {
+    background-color: #2d3436 !important;
+    color: white !important;
+    border: 1px solid #4a5058 !important;
+}
+
+/* Asegurar que el placeholder sea visible */
+.form-control::placeholder {
+    color: #718096 !important;
+}
